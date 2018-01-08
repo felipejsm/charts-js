@@ -6,6 +6,11 @@ var ctx = document.getElementById("myChart").getContext('2d');
             datasets: [{
                 label: '# of Votes',
                 data: [12, 19, 3, 5, 2, 3],
+                borderWidth: 1
+            },
+            {
+                label: '# of Non-Voters',
+                data: [14, 9, 33, 15, 21, 0],
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
@@ -35,3 +40,7 @@ var ctx = document.getElementById("myChart").getContext('2d');
             }
         }
     });
+    function changeMe() {
+        myChart.data.datasets[0].data =  [2, 1, 13, 51, 4,5];
+        myChart.update();
+    }
