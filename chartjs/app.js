@@ -2,7 +2,8 @@ var app = angular.module('myApp',[]);
 app.controller('myCtrl', function($scope) {
     var vm = $scope;
     vm.changeMe = changeMe;
-    var ctx = document.getElementById("myChart").getContext('2d');
+    vm.myObjectFullOfCharts = [0,1];
+    var ctx = document.getElementById("myChart1").getContext('2d');
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -45,7 +46,7 @@ app.controller('myCtrl', function($scope) {
         }
     });
      
-    var ctxDoughnut = document.getElementById("myDoughnutChart").getContext('2d');
+    var ctxDoughnut = document.getElementById("myChart2").getContext('2d');
     var myDoughnutChart = new Chart(ctxDoughnut, {
         type: 'doughnut',
         data : {
