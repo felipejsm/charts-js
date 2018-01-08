@@ -1,4 +1,8 @@
-var ctx = document.getElementById("myChart").getContext('2d');
+var app = angular.module('myApp',[]);
+app.controller('myCtrl', function($scope) {
+    var vm = $scope;
+    vm.changeMe = changeMe;
+    var ctx = document.getElementById("myChart").getContext('2d');
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -40,7 +44,37 @@ var ctx = document.getElementById("myChart").getContext('2d');
             }
         }
     });
+     
+    var ctxDoughnut = document.getElementById("myDoughnutChart").getContext('2d');
+    var myDoughnutChart = new Chart(ctxDoughnut, {
+        type: 'doughnut',
+        data : {
+            datasets: [{
+                data: [10, 20, 30],
+                
+                borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)'
+                ]
+            }],
+        
+            // These labels appear in the legend and in the tooltips when hovering different arcs
+            labels: [
+                'Red',
+                'Yellow',
+                'Blue'
+            ]
+        }
+    });
     function changeMe() {
         myChart.data.datasets[0].data =  [2, 1, 13, 51, 4,5];
         myChart.update();
     }
+})
+    
