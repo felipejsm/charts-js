@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Chart.js</title>
+</head>
+<body ng-app="myApp" ng-controller="myCtrl">
+    <button>Change Data</button>
+    <div ng-repeat="item in myObjectFullOfCharts">
+        <canvas class="chart chart-bar" chart-data="data" chart-labels="labels" 
+        chart-series="series" chart-click="onClick"></canvas> 
+    </div>
+    
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+<script src="lib/angular-chart.min.js"></script>
+<script src="app2.js"></script>
+</html>
