@@ -14,6 +14,7 @@
 <body ng-app="myApp" ng-controller="myCtrl">
     <div class="panel-body"  style="margin-top: 20px">
         <div class="row" ng-repeat="d in data">
+            <label>{{nomeUnidadeEnsino[$index]}}</label>
             <div class="col-sm-8">
                 <div class="chart-container">
                         <canvas class="chart chart-bar" chart-data="data[$index]" chart-labels="labels[$index]" 
@@ -22,9 +23,9 @@
             </div>
             <div class="col-sm-4 text-center">
                 <canvas id="doughnut" class="chart chart-doughnut"
-                chart-data="data2[$index]" chart-labels="series" chart-options="options" chart-colors="colors2">
+                chart-data="dataDoughnut[$index]" chart-labels="series" chart-options="options" chart-colors="colors2">
                 </canvas> 
-                <label style="font-weight: bold">35%</label>
+                <label style="font-weight: bold">{{porcentagem[$index]}}%</label>
             </div>
         </div>
     </div>
