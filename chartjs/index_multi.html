@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Multi Charts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+</head>
+<body ng-app="myApp" ng-controller="myCtrl">
+    <div class="panel-body"  style="margin-top: 20px">
+        <div class="row" ng-repeat="d in data">
+            <div class="col-sm-8">
+                <div class="chart-container">
+                        <canvas class="chart chart-bar" chart-data="data[$index]" chart-labels="labels[$index]" 
+                        chart-series="series" chart-options="options" chart-colors="colors"></canvas> 
+                </div>
+            </div>
+            <div class="col-sm-4 text-center">
+                <canvas id="doughnut" class="chart chart-doughnut"
+                chart-data="data2[$index]" chart-labels="series" chart-options="options" chart-colors="colors2">
+                </canvas> 
+                <label style="font-weight: bold">35%</label>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+<script src="lib/angular-chart.min.js"></script>
+<script src="app3.js"></script>
+</html>
