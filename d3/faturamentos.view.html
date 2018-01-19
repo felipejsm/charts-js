@@ -1,0 +1,262 @@
+<div class="container">
+  <!-- título -->
+  <div class="row">
+    <div class="column col-md-12">
+      <h2 class="bar-top">Faturamento</h2>
+    </div>
+  </div>
+  <!-- filtros -->
+  <div class="row">
+    <div class="column col-md-4" ng-include="'views/logged/includes/linhas.html'">
+    </div>
+    <div class="column col-md-4" ng-include="'views/logged/includes/centros-de-custo-faturamento.html'">
+    </div>
+    <div class="column col-md-4" ng-include="'views/logged/includes/clientes.html'">
+    </div>
+  </div>
+  <div class="row">
+    <div class="column col-md-4" ng-include="'views/logged/includes/anomes-inicial.html'">
+    </div>
+    <div class="column col-md-4" ng-include="'views/logged/includes/anomes-final.html'">
+    </div>
+  </div>
+  
+  <!-- conteúdo principal -->
+  <div class="row">
+    <div class="column col-md-8"> 
+      <span class="center-block">&nbsp;</span>
+      
+      <datasource name="FatAno" entity="{{session.url}}/webservices/rest/cockpit/faturamentosAno" filter="?idLinha={{linhaSelecionada}}&amp;idCliente={{ clienteSelecionado }}&amp;anomesInicial={{anomesInicialSelecionado}}&amp;anomesFinal={{anomesFinalSelecionado}}&amp;idCentro={{centroSelecionado}}" rows-per-page="-1" class="" headers="Authenticate:{{session.token}}"></datasource> 
+      <datasource name="AnoCliente" entity="{{session.url}}/webservices/rest/cockpit/faturamentosAnoCliente" keys="" filter="?idLinha={{linhaSelecionada}}&amp;ano={{anoSelecionado}}&amp;mes={{mesSelecionado}}&amp;tipo={{tipoSelecionado}}&amp;idCliente={{clienteSelecionado}}&amp;idCentro={{centroSelecionado}}" rows-per-page="-1" class="" headers="Authenticate:{{session.token}}"></datasource> 
+      <datasource name="ServicoCliente" entity="{{session.url}}/webservices/rest/cockpit/faturamentosServicoCliente" keys="" filter="?idLinha={{linhaSelecionada}}&amp;ano={{anoSelecionado}}&amp;mes={{mesSelecionado}}&amp;tipo={{tipoSelecionado}}&amp;idCliente={{clienteSelecionado}}&amp;idCentro={{centroSelecionado}}" rows-per-page="-1" class="" headers="Authenticate:{{session.token}}"></datasource>
+      
+      <div class="waiting" ng-show="FatAno.isBusy() || AnoCliente.isBusy() || ServicoCliente.isBusy()">
+        <i class="fa fa-spinner fa-spin"></i>
+      </div>
+      
+      <button type="button" class="btn btn-primary" ng-model="graficoFinanceiroAcumulado" uib-btn-checkbox btn-checkbox-true="'S'" btn-checkbox-false="'N'">
+        Acumulado ({{graficoFinanceiroAcumulado}})
+      </button>
+      
+      <div class="btn-group">
+        <label class="btn btn-success" ng-model="fatGrafico.mostra" uib-btn-radio="'software'">
+          Software XXXX
+        </label>
+        <label class="btn btn-success" ng-model="fatGrafico.mostra" uib-btn-radio="'servico'">
+          Serviço
+        </label>
+        <label class="btn btn-success" ng-model="fatGrafico.mostra" uib-btn-radio="'ambos'">
+          Ambos
+        </label>
+      </div>
+      <canvas class="chart chart-line"
+            data="fatAnoData(FatAno.data, graficoFinanceiroAcumulado)"
+            labels="fatAnoLabels(FatAno.data)" legend="true" series="fatSeries()" colours="['#00A859', '#F79433']">
+      </canvas>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="column col-md-8">
+      <span class="center-block">&nbsp;</span>
+      <div class="waiting" ng-show="FatAno.isBusy() || AnoCliente.isBusy() || ServicoCliente.isBusy()">
+        <i class="fa fa-spinner fa-spin"></i>
+      </div>
+      <table class="table table-responsive table-striped"> 
+        <thead> 
+          <tr class="table-header">
+            <th> 
+              Ano/mês
+            </th>
+            <th> 
+              Software
+            </th> 
+            <th> 
+              Serviço
+            </th>
+            <th>
+              Total
+            </th>
+          </tr> 
+        </thead>
+        <tfoot>
+          <tr>
+            <td>Total</td>
+            <td class="text-center">
+              {{ calculaColuna("soma", "software", FatAno.data)|number:0  }}
+              {{ textoPercentual(calculaColuna("soma", "software", FatAno.data), adiciona(calculaColuna("soma", "software", FatAno.data), calculaColuna("soma", "servico", FatAno.data))) }}
+            </td>
+            <td class="text-center">
+              {{ calculaColuna("soma", "servico", FatAno.data)|number:0  }}
+              {{ textoPercentual(calculaColuna("soma", "servico", FatAno.data), adiciona(calculaColuna("soma", "software", FatAno.data), calculaColuna("soma", "servico", FatAno.data))) }}
+            </td>
+            <td class="text-center">
+              {{ adiciona(calculaColuna("soma", "software", FatAno.data), calculaColuna("soma", "servico", FatAno.data))|number:0 }}
+            </td>
+          </tr>
+          <tr>
+            <td>Média</td>
+            <td class="text-center">
+              {{ calculaColuna("media", "software", FatAno.data)|number:2  }}
+            </td>
+            <td class="text-center">
+              {{ calculaColuna("media", "servico", FatAno.data)|number:2  }}
+            </td>
+            <td class="text-center">
+              {{ adiciona(calculaColuna("media", "software", FatAno.data), calculaColuna("media", "servico", FatAno.data))|number:2 }}
+            </td>
+          </tr>
+        </tfoot>
+        <tbody> 
+          <tr class="table-content" ng-repeat="linha in FatAno.data"> 
+            <td class="pointer text-center" data-toggle="modal" data-target="#modalAnoCliente" ng-click="chamaAnoCliente(linha.ano, linha.mes, '')"> 
+              {{linha.ano}}/{{linha.mes}}
+            </td>
+            <td class="text-center pointer" data-toggle="modal" data-target="#modalAnoCliente" ng-click="chamaAnoCliente(linha.ano, linha.mes, 'o')"> 
+              {{linha.software| number:0}} {{ textoPercentual(linha.software, adiciona(linha.servico, linha.software)) }}
+            </td>
+            <td class="text-center pointer" data-toggle="modal" data-target="#modalAnoCliente" ng-click="chamaAnoCliente(linha.ano, linha.mes, 'e')"> 
+              {{linha.servico | number:0}} {{ textoPercentual(linha.servico, adiciona(linha.servico, linha.software)) }}
+            </td>
+            <td class="text-center"> 
+              {{ adiciona(linha.servico, linha.software) | number:0}} 
+            </td>
+          </tr>
+        </tbody> 
+      </table>
+        
+    </div>
+  </div>
+  <!-- /fim do conteúdo principal -->
+</div>
+
+<!-- modal ano cliente -->
+<div class="modal fade" id="modalAnoCliente" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">{{ nomeExibicao(linhaSelecionada, Linhas.data, "todas as linhas")  }} / {{ nomeExibicao(centroSelecionado, Centros.data, "todos os centros")  }} / {{ nomeExibicao(clienteSelecionado, Clientes.data, "todos os clientes")  }} / ({{anoSelecionado}}/{{ mesSelecionado }}) / {{ tipoSelecionadoNome() }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="waiting" ng-show="AnoCliente.isBusy()">
+          <i class="fa fa-spinner fa-spin"></i>
+        </div>
+        
+        <table class="table table-responsive table-striped"> 
+          <thead> 
+            <tr class="table-header">
+              <th> 
+                Cliente
+              </th>
+              <th> 
+                Valor
+              </th> 
+            </tr> 
+          </thead>
+          <tfoot>
+            <tr>
+              <td>Total</td>
+              <td class="text-center">
+                {{ calculaColuna("soma", "valor", AnoCliente.data)|number:0  }}
+              </td>
+            </tr>
+          </tfoot>
+          <tbody> 
+            <tr class="table-content" ng-repeat="linha in AnoCliente.data"> 
+              <td class="pointer"> 
+                {{linha.cliente}}
+              </td>
+              <td class="text-center pointer" data-toggle="modal" data-target="#modalServicoCliente" ng-click="selecionaCliente(linha.id)"> 
+                {{linha.valor|number:0}} 
+              </td>
+            </tr>
+          </tbody> 
+        </table>
+        <p ng-hide="AnoCliente.isBusy() || AnoCliente.data.length">Nenhum valor encontrado.</p>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /fim modal ano cliente -->
+
+<!-- modal serviço cliente -->
+<div class="modal fade" id="modalServicoCliente" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">{{ nomeExibicao(linhaSelecionada, Linhas.data, "todas as linhas")  }} / {{ nomeExibicao(centroSelecionado, Centros.data, "todos os centros")  }} / {{ nomeExibicao(clienteSelecionado, Clientes.data, "todos os clientes")  }} / ({{anoSelecionado}}/{{ mesSelecionado }}) / {{ tipoSelecionadoNome() }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="waiting" ng-show="AnoCliente.isBusy()">
+          <i class="fa fa-spinner fa-spin"></i>
+        </div>
+        
+        <table class="table table-responsive table-striped"> 
+          <thead> 
+            <tr class="table-header">
+              <th> 
+                Id Serviço
+              </th>
+              <th> 
+                Cliente
+              </th>
+              <th> 
+                Identificador
+              </th>
+              <th> 
+                Valor
+              </th>
+              <th> 
+                Contrato
+              </th>
+            </tr> 
+          </thead>
+          <tfoot>
+            <tr>
+              <td>Total</td>
+              <td></td>
+              <td></td>
+              <td class="text-center">
+                {{ calculaColuna("soma", "valor", ServicoCliente.data)  }}
+              </td>
+              <td></td>
+            </tr>
+          </tfoot>
+          <tbody> 
+            <tr class="table-content" ng-repeat="linha in ServicoCliente.data"> 
+              <td> 
+                {{linha.idServico}}
+              </td>
+              <td> 
+                {{linha.cliente}} 
+              </td>
+              <td> 
+                {{linha.identificador}} 
+              </td>
+              <td> 
+                {{linha.valor}} 
+              </td>
+              <td> 
+                {{linha.contrato}} 
+              </td>
+            </tr>
+          </tbody> 
+        </table>
+        <p ng-hide="ServicoCliente.isBusy() || ServicoCliente.data.length">Nenhum valor encontrado.</p>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /fim modal serviço cliente -->
+
+
